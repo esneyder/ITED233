@@ -1,7 +1,7 @@
 DECLARE
   /* Store the input values coming from the user */
-  v_hire_date_from employees.hire_date%TYPE := &Hire_Date_From;
-  v_hire_date_to employees.hire_date%TYPE := &Hire_Date_To;
+  i_hire_date_from employees.hire_date%TYPE := &Hire_Date_From;
+  i_hire_date_to employees.hire_date%TYPE := &Hire_Date_To;
   
   /* Declare the variables which will hold the value from the cursor */
   v_hire_date employees.hire_date%TYPE;
@@ -15,7 +15,7 @@ DECLARE
   v_record_counter NUMBER;
   
   /* Cursor declaration, same as the one from MP2 */
-  CURSOR v_emp_dept_cursor(p_hire_date_from v_hire_date_from%TYPE, p_hire_date_to v_hire_date_to%TYPE) IS
+  CURSOR v_emp_dept_cursor(p_hire_date_from i_hire_date_from%TYPE, p_hire_date_to i_hire_date_to%TYPE) IS
     SELECT e.hire_date, e.employee_id, e.last_name, e.first_name, e.department_id, d.department_name
     FROM employees e, departments d
     WHERE e.hire_date >= p_hire_date_from AND e.hire_date <= p_hire_date_to AND e.department_id = d.department_id;
@@ -28,14 +28,14 @@ DECLARE
 BEGIN
 
   /* Assign into v_record_counter the number of rows returned by the cursor, to track and handle the exception of not having any rows returned */
-  SELECT COUNT(*) INTO v_record_counter FROM employees WHERE hire_date >= v_hire_date_from AND hire_date <= v_hire_date_to;
+  SELECT COUNT(*) INTO v_record_counter FROM employees WHERE hire_date >= i_hire_date_from AND hire_date <= i_hire_date_to;
 
-  IF v_hire_date_to < v_hire_date_from THEN
+  IF i_hire_date_to < i_hire_date_from THEN
     RAISE hire_date_error;
   ELSIF v_record_counter = 0 THEN
     RAISE no_record_retrieved;
   ELSIF v_record_counter > 0 THEN
-    OPEN v_emp_dept_cursor(v_hire_date_from, v_hire_date_to);
+    OPEN v_emp_dept_cursor(i_hire_date_from, i_hire_date_to);
     DBMS_OUTPUT.PUT_LINE('RECORD/S THAT HAVE MET THE CRITERIA :');
     DBMS_OUTPUT.PUT_LINE('---------------------------------------');
     LOOP

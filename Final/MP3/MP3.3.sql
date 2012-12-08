@@ -1,5 +1,5 @@
 DECLARE
-  v_emp_last_name employees.last_name%type := &Employee_Last_Name;
+  i_emp_last_name employees.last_name%type := &Employee_Last_Name;
   v_salary employees.salary%type;
   v_year NUMBER;
   conditions_met EXCEPTION;
@@ -11,7 +11,7 @@ BEGIN
   SELECT salary, (TO_CHAR(hire_date, 'YYYY'))
   INTO v_salary, v_year 
   FROM employees
-  WHERE last_name = v_emp_last_name;
+  WHERE last_name = i_emp_last_name;
   
   /*
   to get the number of years the employee
@@ -35,8 +35,10 @@ BEGIN
 EXCEPTION
   WHEN conditions_met THEN
     INSERT INTO analysis
-    VALUES(v_emp_last_name, v_year, v_salary);
+    VALUES(i_emp_last_name, v_year, v_salary);
     DBMS_OUTPUT.PUT_LINE('Due for a raise.');
     DBMS_OUTPUT.PUT_LINE('Inserted into ANALYSIS table.');
     COMMIT;
+  WHEN NO_DATA_FOUND THEN
+    DBMS_OUTPUT.PUT_LINE('No Data Found Exception : Employee with the last name "' || i_emp_last_name || '" was not found in the Database.');
 END;
